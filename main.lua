@@ -361,18 +361,26 @@ function whatui:Create(options)
     ContentArea.Position = UDim2.new(0, 0, 0, 50)
     ContentArea.Size = UDim2.new(1, 0, 1, -50)
     
+    -- Create a completely separate floating tab container
     TabContainer.Name = "TabContainer"
-    TabContainer.Parent = ContentArea
+    TabContainer.Parent = WhatUI -- Parent directly to WhatUI instead of ContentArea
     TabContainer.BackgroundColor3 = theme.Secondary
-    TabContainer.BackgroundTransparency = 0.5
-    TabContainer.Size = UDim2.new(0, 150, 1, 0)
-    TabContainer.Position = UDim2.new(0, -140, 0, 0)
-    TabContainer.AnchorPoint = Vector2.new(0, 0)
+    TabContainer.BackgroundTransparency = 0.1
+    TabContainer.Size = UDim2.new(0, 150, 0, 400) -- Fixed size
+    TabContainer.Position = UDim2.new(0, -150, 0.5, -200) -- Position off-screen initially
+    TabContainer.AnchorPoint = Vector2.new(0, 0.5) -- Anchor to middle left
+    
+    -- Make tab container float to the side of main UI
+    TweenService:Create(
+        TabContainer,
+        TweenInfo.new(0.7, Enum.EasingStyle.Back, Enum.EasingDirection.Out, 0, false, 0.2), -- Delayed animation
+        {Position = UDim2.new(0, -30, 0.5, -200)} -- Show 30 pixels in from left edge
+    ):Play()
     
     -- Create Shadow for TabContainer
     local TabContainerShadow = Objects.new("Shadow")
     TabContainerShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
-    TabContainerShadow.ImageTransparency = 0.6
+    TabContainerShadow.ImageTransparency = 0.4
     TabContainerShadow.Parent = TabContainer
     
     -- Create a UICorner for TabContainer
@@ -380,12 +388,31 @@ function whatui:Create(options)
     TabContainerCorner.CornerRadius = UDim.new(0, 10)
     TabContainerCorner.Parent = TabContainer
     
-    -- Add animation to show the tab container
-    TweenService:Create(
-        TabContainer,
-        TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Position = UDim2.new(0, -20, 0, 0)}
-    ):Play()
+    -- Create a hover detector for tab container
+    local TabHoverDetector = Instance.new("TextButton")
+    TabHoverDetector.Name = "TabHoverDetector"
+    TabHoverDetector.Parent = TabContainer
+    TabHoverDetector.BackgroundTransparency = 1
+    TabHoverDetector.Text = ""
+    TabHoverDetector.Size = UDim2.fromScale(1, 1)
+    
+    -- Add hover effect to expand tab container on hover
+    TabHoverDetector.MouseEnter:Connect(function()
+        TweenService:Create(
+            TabContainer,
+            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, 0, 0.5, -200)} -- Show fully on hover
+        ):Play()
+    end)
+    
+    -- Return to partially hidden state when not hovering
+    TabHoverDetector.MouseLeave:Connect(function()
+        TweenService:Create(
+            TabContainer,
+            TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+            {Position = UDim2.new(0, -30, 0.5, -200)} -- Show partial on leave
+        ):Play()
+    end)
     
     TabScrollingFrame.Name = "TabScrollingFrame"
     TabScrollingFrame.Parent = TabContainer
@@ -561,8 +588,9 @@ function whatui:Create(options)
         TabPage.Active = true
         TabPage.BackgroundTransparency = 1
         TabPage.BorderSizePixel = 0
-        TabPage.Position = UDim2.new(0, 140, 0, 0) -- Updated position to account for floating tab bar
-        TabPage.Size = UDim2.new(1, -150, 1, 0)
+        TabPage.Position = UDim2.new(0, 0, 0, 0) -- Start from left edge of content area
+        TabPage.Size = UDim2.new(1, 0, 1, 0) -- Take full content area
+        TabPage.ClipsDescendants = true -- Ensure content doesn't overflow
         TabPage.ScrollBarThickness = 4
         TabPage.ScrollBarImageColor3 = theme.Accent
         TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -574,10 +602,10 @@ function whatui:Create(options)
         
         TabPagePadding.Name = "TabPagePadding"
         TabPagePadding.Parent = TabPage
-        TabPagePadding.PaddingLeft = UDim.new(0, 10)
-        TabPagePadding.PaddingTop = UDim.new(0, 10)
-        TabPagePadding.PaddingRight = UDim.new(0, 10)
-        TabPagePadding.PaddingBottom = UDim.new(0, 10)
+        TabPagePadding.PaddingLeft = UDim.new(0, 20) -- Add padding to keep elements inside
+        TabPagePadding.PaddingTop = UDim.new(0, 20)
+        TabPagePadding.PaddingRight = UDim.new(0, 20)
+        TabPagePadding.PaddingBottom = UDim.new(0, 20)
         
         -- Tab Button Selection Logic
         local selected = false
