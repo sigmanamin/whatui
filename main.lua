@@ -366,6 +366,26 @@ function whatui:Create(options)
     TabContainer.BackgroundColor3 = theme.Secondary
     TabContainer.BackgroundTransparency = 0.5
     TabContainer.Size = UDim2.new(0, 150, 1, 0)
+    TabContainer.Position = UDim2.new(0, -140, 0, 0)
+    TabContainer.AnchorPoint = Vector2.new(0, 0)
+    
+    -- Create Shadow for TabContainer
+    local TabContainerShadow = Objects.new("Shadow")
+    TabContainerShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    TabContainerShadow.ImageTransparency = 0.6
+    TabContainerShadow.Parent = TabContainer
+    
+    -- Create a UICorner for TabContainer
+    local TabContainerCorner = Instance.new("UICorner")
+    TabContainerCorner.CornerRadius = UDim.new(0, 10)
+    TabContainerCorner.Parent = TabContainer
+    
+    -- Add animation to show the tab container
+    TweenService:Create(
+        TabContainer,
+        TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Position = UDim2.new(0, -20, 0, 0)}
+    ):Play()
     
     TabScrollingFrame.Name = "TabScrollingFrame"
     TabScrollingFrame.Parent = TabContainer
@@ -541,8 +561,8 @@ function whatui:Create(options)
         TabPage.Active = true
         TabPage.BackgroundTransparency = 1
         TabPage.BorderSizePixel = 0
-        TabPage.Position = UDim2.new(0, 160, 0, 0)
-        TabPage.Size = UDim2.new(1, -170, 1, 0)
+        TabPage.Position = UDim2.new(0, 140, 0, 0) -- Updated position to account for floating tab bar
+        TabPage.Size = UDim2.new(1, -150, 1, 0)
         TabPage.ScrollBarThickness = 4
         TabPage.ScrollBarImageColor3 = theme.Accent
         TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
@@ -766,10 +786,10 @@ function whatui:Create(options)
                     ButtonFrame,
                     TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
                     {BackgroundColor3 = Color3.fromRGB(
-                        theme.Secondary.R * 255 + 15, 
-                        theme.Secondary.G * 255 + 15, 
-                        theme.Secondary.B * 255 + 15
-                    )/255}
+                        math.min(theme.Secondary.R * 255 + 15, 255),
+                        math.min(theme.Secondary.G * 255 + 15, 255),
+                        math.min(theme.Secondary.B * 255 + 15, 255)
+                    )}
                 ):Play()
                 
                 TweenService:Create(
@@ -1001,10 +1021,10 @@ function whatui:Create(options)
                     ToggleFrame,
                     TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
                     {BackgroundColor3 = Color3.fromRGB(
-                        theme.Secondary.R * 255 + 15, 
-                        theme.Secondary.G * 255 + 15, 
-                        theme.Secondary.B * 255 + 15
-                    )/255}
+                        math.min(theme.Secondary.R * 255 + 15, 255),
+                        math.min(theme.Secondary.G * 255 + 15, 255),
+                        math.min(theme.Secondary.B * 255 + 15, 255)
+                    )}
                 ):Play()
             end)
             
@@ -1579,10 +1599,10 @@ function whatui:Create(options)
                     DropdownFrame,
                     TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
                     {BackgroundColor3 = Color3.fromRGB(
-                        theme.Secondary.R * 255 + 15, 
-                        theme.Secondary.G * 255 + 15, 
-                        theme.Secondary.B * 255 + 15
-                    )/255}
+                        math.min(theme.Secondary.R * 255 + 15, 255),
+                        math.min(theme.Secondary.G * 255 + 15, 255),
+                        math.min(theme.Secondary.B * 255 + 15, 255)
+                    )}
                 ):Play()
             end)
             
@@ -1720,11 +1740,52 @@ return whatui
 --[[
 -- Put this code in your script:
 local whatui = loadstring(readfile("whatui.lua"))()
-local ui = whatui:new()
-local tab = ui:Tab("Main")
-local page = tab:Page("Main")
-local dropdown = page:Dropdown("Dropdown", {"Item 1", "Item 2", "Item 3"}, "Item 1", function(value)
-    print(value)
-end)
+local ui = whatui:Create({
+    title = "My UI",
+    subtitle = "Created with WhatUI",
+    blur = true
+})
+
+local mainTab = ui:Tab({title = "Main"})
+local settingsTab = ui:Tab({title = "Settings"})
+
+-- Add elements
+mainTab:Button({
+    title = "Click Me",
+    description = "This is a button",
+    callback = function()
+        print("Button clicked!")
+    end
+})
+
+mainTab:Toggle({
+    title = "Auto Farm",
+    description = "Enable auto farming",
+    default = false,
+    callback = function(enabled)
+        print("Auto farm:", enabled)
+    end
+})
+
+mainTab:Slider({
+    title = "Walk Speed",
+    description = "Adjust your walking speed",
+    min = 16,
+    max = 100,
+    default = 16,
+    callback = function(value)
+        print("Speed set to:", value)
+    end
+})
+
+mainTab:Dropdown({
+    title = "Select Option",
+    description = "Choose from the list",
+    items = {"Option 1", "Option 2", "Option 3"},
+    default = "Option 1",
+    callback = function(value)
+        print("Selected:", value)
+    end
+})
 ]]
 
