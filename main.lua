@@ -251,7 +251,7 @@ function whatui:Create(options)
     TweenService:Create(
         MainUI, 
         TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-        {Size = UDim2.new(0, 800, 0, 500)}
+        {Size = UDim2.new(0, 650, 0, 500)} -- Reduced width to accommodate TabContainer
     ):Play()
     
     UICorner.CornerRadius = UDim.new(0, 10)
@@ -358,8 +358,8 @@ function whatui:Create(options)
     ContentArea.Name = "ContentArea"
     ContentArea.Parent = MainUI
     ContentArea.BackgroundTransparency = 1
-    ContentArea.Position = UDim2.new(0, 0, 0, 50)
-    ContentArea.Size = UDim2.new(1, 0, 1, -50)
+    ContentArea.Position = UDim2.new(0, 150, 0, 50) -- Start 150 pixels from the left to avoid TabContainer
+    ContentArea.Size = UDim2.new(1, -150, 1, -50) -- Reduce width by 150 pixels to account for TabContainer
     
     -- Create a completely separate floating tab container
     TabContainer.Name = "TabContainer"
@@ -471,7 +471,7 @@ function whatui:Create(options)
                 TweenService:Create(
                     MainUI,
                     TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-                    {Size = UDim2.new(0, 800, 0, 500)}
+                    {Size = UDim2.new(0, 650, 0, 500)}
                 ):Play()
                 
                 if blur then
@@ -588,8 +588,8 @@ function whatui:Create(options)
         TabPage.Active = true
         TabPage.BackgroundTransparency = 1
         TabPage.BorderSizePixel = 0
-        TabPage.Position = UDim2.new(0, 0, 0, 0) -- Start from left edge of content area
-        TabPage.Size = UDim2.new(1, 0, 1, 0) -- Take full content area
+        TabPage.Position = UDim2.new(0, 0, 0, 0) -- Start from left edge of ContentArea
+        TabPage.Size = UDim2.new(1, 0, 1, 0) -- Take full ContentArea
         TabPage.ClipsDescendants = true -- Ensure content doesn't overflow
         TabPage.ScrollBarThickness = 4
         TabPage.ScrollBarImageColor3 = theme.Accent
@@ -1809,11 +1809,4 @@ mainTab:Slider({
 mainTab:Dropdown({
     title = "Select Option",
     description = "Choose from the list",
-    items = {"Option 1", "Option 2", "Option 3"},
-    default = "Option 1",
-    callback = function(value)
-        print("Selected:", value)
-    end
-})
-]]
-
+    items =
